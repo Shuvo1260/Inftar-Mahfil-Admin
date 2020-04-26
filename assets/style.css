@@ -1,0 +1,227 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px, solid #003E65;
+    padding: 8px;
+}
+
+th {
+    font-weight: bold;
+    /* border: solid #04bd7f9c; */
+    border-radius: 5px;
+    background-color: #003E65;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    width: max-content;
+}
+
+tr:hover {
+    background-color: rgb(208, 250, 255);
+}
+input {
+    border: 2.5px solid #003E65 !important;
+  }
+.list-value {
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+
+div.container {
+    width: inherit;
+    margin: 0 auto;
+    position: center;
+}
+
+legend {
+    font-size: 30px;
+    color: #003E65;
+    border-color: #003E65;
+}
+
+fieldset {
+    border-color: #003E65;
+    border-width: medium;
+    border-radius: 10px;
+    width: 80%;
+    outline: none;
+    margin: auto;
+    padding: 5%;
+    transition: 0.5s;
+}
+
+label {
+    color: #003E65;
+    font-size: 24px;
+}
+
+.button {
+    background: #003E65;
+    border: 0px solid #003E65;
+    align-self: center;
+    text-align: center;
+    text-decoration: bold;
+    font-size: 24px;
+    border-width: 0px;
+    border-style: solid;
+    border-color: #003E65;
+    border-radius: 50px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    color: white;
+    padding: 15px 32px;
+    cursor: pointer;
+}
+
+.input_box {
+    width: 90%;
+    font-size: 16px;
+    border-radius: 10px;
+    border-color: #003E65;
+    padding: 15px;
+    border-width: medium;
+    line-height: normal;
+    overflow: hidden;
+}
+
+.dropdown_box {
+    width: 95%;
+    font-size: 16px;
+    border-radius: 10px;
+    border-color: #003E65;
+    padding: 15px;
+    border-width: medium;
+    line-height: normal;
+    overflow: hidden;
+}
+
+.button_container {
+    height: 100px;
+    position: relative;
+}
+
+.center_button {
+    margin: 0;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    align-content: center;
+    top: 20%;
+}
+
+@media (max-width: 800px) {
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    td, th {
+        border: 1px, solid #003E65;
+        padding: 8px;
+    }
+    
+    th {
+        font-weight: bold;
+        /* border: solid #04bd7f9c; */
+        border-radius: 5px;
+        background-color: #003E65;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        width: max-content;
+    }
+    
+    tr:hover {
+        background-color: rgb(208, 250, 255);
+    }
+    
+    .list-value {
+        padding: 5px;
+        border-radius: 5px;
+        width: 100%;
+    }
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    div.container {
+        width: 100%;
+        margin: 0 auto;
+        position: center;
+    }
+    legend {
+        font-size: 30px;
+        color: #003E65;
+        border-color: #003E65;
+    }
+    fieldset {
+        border-color: #003E65;
+        border-width: medium;
+        border-radius: 10px;
+        width: 90%;
+        outline: none;
+        margin: auto;
+        padding: 5%;
+        transition: 0.5s;
+        position: absolute;
+    }
+    label {
+        color: #003E65;
+        font-size: 24px;
+    }
+    .button {
+        background: #003E65;
+        border: 0px solid #003E65;
+        align-self: center;
+        text-align: center;
+        text-decoration: bold;
+        font-size: 14px;
+        border-width: 0px;
+        border-style: solid;
+        border-color: #003E65;
+        border-radius: 50px;
+        -moz-border-radius: 50px;
+        -webkit-border-radius: 50px;
+        color: white;
+        padding: 15px 32px;
+    }
+    .input_box {
+        width: 90%;
+        font-size: 16px;
+        border-radius: 10px;
+        border-color: #003E65;
+        padding: 15px;
+        border-width: medium;
+        line-height: normal;
+        overflow: hidden;
+    }
+    .dropdown_box {
+        width: 95%;
+        font-size: 16px;
+        border-radius: 10px;
+        border-color: #003E65;
+        padding: 15px;
+        border-width: medium;
+        line-height: normal;
+        overflow: hidden;
+    }
+    .button_container {
+        height: 100px;
+        position: relative;
+    }
+    .center_button {
+        margin: 0;
+        left: 10px;
+        position: relative;
+    }
+}

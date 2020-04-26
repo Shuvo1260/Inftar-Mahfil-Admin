@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=yes" />
+
+    <link rel="icon" href="assets/Images/icon.jpg" type="image/png">
+    <title>Iftar Mahfil with innocent souls</title>
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-app.js"></script>
+    <!-- Firebase setup -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.2/firebase-firestore.js"></script>
+
+    <!-- sweetalert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <!-- Linking the files -->
+    <link rel="stylesheet" type="text/css" href="assets/style.css">
+    <script type="module" src="assets/script.js"></script>
+
+</head>
+
+<body>
+
+    <div class="button_container">
+        <div class="center_button">
+            <button id="pendingList" type="button" class="button">Pending List</button>
+            <button id="approvedList" type="button" class="button">Approved List</button>
+        </div>
+    </div>
+
+
+    <br>
+    <br>
+    <div>
+        <fieldset>
+            <center>
+                <table id="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Batch no</th>
+                            <th>Account name</th>
+                            <th>Amount</th>
+                            <th>Transaction ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="donorList"></tbody>
+                </table>
+            </center>
+        </fieldset>
+    </div>
+
+</body>
