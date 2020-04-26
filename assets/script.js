@@ -43,10 +43,9 @@ db.collection('Result').onSnapshot(snapshot => {
 
 document.getElementById("pendingList").onclick = function () {
     console.log(fund)
-    databasePath = 'Pending Donation';
     tableData = []
     // Realtime data fetching
-db.collection(databasePath).onSnapshot(snapshot => {
+db.collection('Pending Donation').onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
     changes.forEach(change => {
         console.log(change.doc.data());
@@ -83,10 +82,9 @@ db.collection(databasePath).onSnapshot(snapshot => {
 
 document.getElementById("approvedList").onclick = function () {
     console.log("approved")
-    databasePath = 'Donation List';
     tableData = []
     // Realtime data fetching
-db.collection(databasePath).onSnapshot(snapshot => {
+db.collection('Donation List').onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
     changes.forEach(change => {
         console.log(change.doc.data());
@@ -131,7 +129,7 @@ function renderList(doc) {
     };
 
     tableData.push(values);
-     console.log(tableData);
+    console.log(tableData);
 }
 
 var databasePath = 'Pending Donation'
