@@ -22,101 +22,106 @@ var available;
 
 let tableData = [];
 
-db.collection('Result').onSnapshot(snapshot => {
-    console.log("Result");
-    let changes = snapshot.docChanges();
-    changes.forEach(change => {
-        console.log(change.doc.data());
-        if (change.type === 'added') {
-            fund = change.doc.data().fund
-            donated = change.doc.data().donated
-            available = change.doc.data().available
-        } else if (change.type === "modified") {
-            console.log(change.doc.data());
-            fund = change.doc.data().fund
-            donated = change.doc.data().donated
-            available = change.doc.data().available
-        }
-    });
-})
-
 
 document.getElementById("pendingList").onclick = function () {
     console.log(fund)
     tableData = []
+    databasePath = 'Pending Donation'
     // Realtime data fetching
-db.collection('Pending Donation').onSnapshot(snapshot => {
-    let changes = snapshot.docChanges();
-    changes.forEach(change => {
-        console.log(change.doc.data());
-        if (change.type === 'added') { // If data is added
-            renderList(change.doc);
-        } else if (change.type === "removed") { // If data is removed
-            console.log(change.doc.data().Id);
-            let index = 0;
-            for (let data of tableData) {
-                if (data.Id == change.doc.data().Id) {
-                    console.log("Removed ", index);
-                    tableData.splice(index, 1);
-                    break;
+    db.collection('Pending Donation').onSnapshot(snapshot => {
+        let changes = snapshot.docChanges();
+        changes.forEach(change => {
+            console.log(change.doc.data());
+            if (databasePath === 'Pending Donation') {
+                if (change.type === 'added') { // If data is added
+                    renderList(change.doc);
+                } else if (change.type === "removed") { // If data is removed
+                    console.log(change.doc.data().transactionID);
+                    let index = 0;
+                    for (let data of tableData) {
+                        if (data.transactionID == change.doc.data().transactionID) {
+                            console.log("Removed ", index);
+                            tableData.splice(index, 1);
+                            break;
+                        }
+                        index++;
+                    }
+                } else if (change.type === "modified") { // If data is modified
+                    console.log(change.doc.data().transactionID);
+                    let index = 0;
+                    for (let data of tableData) {
+                        if (data.transactionID == change.doc.data().transactionID) {
+                            console.log("Modified ", index);
+                            tableData[index] = change.doc.data();
+                            break;
+                        }
+                        index++;
+                    }
                 }
-                index++;
             }
-        } else if (change.type === "modified") { // If data is modified
-            console.log(change.doc.data().Id);
-            let index = 0;
-            for (let data of tableData) {
-                if (data.Id == change.doc.data().Id) {
-                    console.log("Modified ", index);
-                    tableData[index] = change.doc.data();
-                    break;
-                }
-                index++;
-            }
+        });
+        if (databasePath === 'Pending Donation') {
+            loadTableData(tableData);
         }
     });
-
-    loadTableData(tableData);
-});
 }
 
 document.getElementById("approvedList").onclick = function () {
     console.log("approved")
     tableData = []
+    databasePath = 'Donation List'
     // Realtime data fetching
-db.collection('Donation List').onSnapshot(snapshot => {
-    let changes = snapshot.docChanges();
-    changes.forEach(change => {
-        console.log(change.doc.data());
-        if (change.type === 'added') { // If data is added
-            renderList(change.doc);
-        } else if (change.type === "removed") { // If data is removed
-            console.log(change.doc.data().Id);
-            let index = 0;
-            for (let data of tableData) {
-                if (data.Id == change.doc.data().Id) {
-                    console.log("Removed ", index);
-                    tableData.splice(index, 1);
-                    break;
+    db.collection('Donation List').onSnapshot(snapshot => {
+        let changes = snapshot.docChanges();
+        fund = "0"
+        available = "0"
+        changes.forEach(change => {
+            if (databasePath === 'Donation List') {
+                console.log(change.doc.data());
+                if (change.type === 'added') { // If data is added
+                    renderList(change.doc);
+                    fund = parseInt(fund) + parseInt(change.doc.data().amount);
+                    available = parseInt(available) + parseInt(change.doc.data().amount);
+                    console.log("fund: " + fund);
+                    console.log("Available: " + available);
+                    //Inserted data
+                    db.collection('Result').doc('Result').set({
+                        fund: fund,
+                        donated: donated,
+                        available: available,
+                    });
+
+                } else if (change.type === "removed") { // If data is removed
+                    console.log("Id: " + change.doc.data().transactionID);
+                    let index = 0;
+                    for (let data of tableData) {
+                        if (data.transactionID == change.doc.data().transactionID) {
+                            console.log("Removed ", index);
+                            tableData.splice(index, 1);
+                            break;
+                        }
+                        index++;
+                    }
+                } else if (change.type === "modified") { // If data is modified
+                    console.log(change.doc.data().transactionID);
+                    let index = 0;
+                    for (let data of tableData) {
+                        if (data.transactionID == change.doc.data().transactionID) {
+                            console.log("Modified ", index);
+                            tableData[index] = change.doc.data();
+                            break;
+                        }
+                        index++;
+                    }
                 }
-                index++;
             }
-        } else if (change.type === "modified") { // If data is modified
-            console.log(change.doc.data().Id);
-            let index = 0;
-            for (let data of tableData) {
-                if (data.Id == change.doc.data().Id) {
-                    console.log("Modified ", index);
-                    tableData[index] = change.doc.data();
-                    break;
-                }
-                index++;
-            }
+
+        });
+
+        if (databasePath === 'Donation List') {
+            loadTableApprovedData(tableData);
         }
     });
-
-    loadTableApprovedData(tableData);
-});
 }
 
 
@@ -194,6 +199,25 @@ function setEventListener() {
 }
 
 function approved(index, value) {
+    
+db.collection('Result').onSnapshot(snapshot => {
+    console.log("Result");
+    let changes = snapshot.docChanges();
+    changes.forEach(change => {
+        console.log(change.doc.data());
+        if (change.type === 'added') {
+            fund = change.doc.data().fund
+            donated = change.doc.data().donated
+            available = change.doc.data().available
+        } else if (change.type === "modified") {
+            console.log(change.doc.data());
+            fund = change.doc.data().fund
+            donated = change.doc.data().donated
+            available = change.doc.data().available
+        }
+    });
+})
+
     console.log(value);
     //Inserted data
     db.collection('Donation List').doc(value.transactionID).set({
@@ -205,6 +229,16 @@ function approved(index, value) {
         transactionID: value.transactionID
     }).then(function () {
 
+        fund = parseInt(fund) + parseInt(value.amount);
+        available = parseInt(available) + parseInt(value.amount);
+        console.log(fund);
+        console.log(available);
+        //Inserted data
+        db.collection('Result').doc('Result').set({
+            fund: fund,
+            donated: donated,
+            available: available,
+        });
         // Deleting from database
         db.collection('Pending Donation').doc(value.transactionID).delete().then(function () {
 
