@@ -22,8 +22,27 @@ var available;
 
 let tableData = [];
 
+    db.collection('Result').onSnapshot(snapshot => {
+        console.log("Result");
+        let changes = snapshot.docChanges();
+        changes.forEach(change => {
+            console.log(change.doc.data());
+            if (change.type === 'added') {
+                fund = change.doc.data().fund
+                donated = change.doc.data().donated
+                available = change.doc.data().available
+            } else if (change.type === "modified") {
+                console.log(change.doc.data());
+                fund = change.doc.data().fund
+                donated = change.doc.data().donated
+                available = change.doc.data().available
+            }
+        });
+    })
 
 document.getElementById("pendingList").onclick = function () {
+
+
     console.log(fund)
     tableData = []
     databasePath = 'Pending Donation'
@@ -199,24 +218,7 @@ function setEventListener() {
 }
 
 function approved(index, value) {
-    
-db.collection('Result').onSnapshot(snapshot => {
-    console.log("Result");
-    let changes = snapshot.docChanges();
-    changes.forEach(change => {
-        console.log(change.doc.data());
-        if (change.type === 'added') {
-            fund = change.doc.data().fund
-            donated = change.doc.data().donated
-            available = change.doc.data().available
-        } else if (change.type === "modified") {
-            console.log(change.doc.data());
-            fund = change.doc.data().fund
-            donated = change.doc.data().donated
-            available = change.doc.data().available
-        }
-    });
-})
+
 
     console.log(value);
     //Inserted data
