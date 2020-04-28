@@ -99,16 +99,16 @@ document.getElementById("approvedList").onclick = function () {
                 console.log(change.doc.data());
                 if (change.type === 'added') { // If data is added
                     renderList(change.doc);
-                    fund = parseInt(fund) + parseInt(change.doc.data().amount);
-                    available = parseInt(available) + parseInt(change.doc.data().amount);
-                    console.log("fund: " + fund);
-                    console.log("Available: " + available);
-                    //Inserted data
-                    db.collection('Result').doc('Result').set({
-                        fund: fund,
-                        donated: donated,
-                        available: available,
-                    });
+                    // fund = parseInt(fund) + parseInt(change.doc.data().amount);
+                    // available = parseInt(available) + parseInt(change.doc.data().amount);
+                    // console.log("fund: " + fund);
+                    // console.log("Available: " + available);
+                    // //Inserted data
+                    // db.collection('Result').doc('Result').set({
+                    //     fund: fund,
+                    //     donated: donated,
+                    //     available: available,
+                    // });
 
                 } else if (change.type === "removed") { // If data is removed
                     console.log("Id: " + change.doc.data().transactionID);
@@ -231,16 +231,16 @@ function approved(index, value) {
         transactionID: value.transactionID
     }).then(function () {
 
-        fund = parseInt(fund) + parseInt(value.amount);
-        available = parseInt(available) + parseInt(value.amount);
-        console.log(fund);
-        console.log(available);
-        //Inserted data
-        db.collection('Result').doc('Result').set({
-            fund: fund,
-            donated: donated,
-            available: available,
-        });
+        // fund = parseInt(fund) + parseInt(value.amount);
+        // available = parseInt(available) + parseInt(value.amount);
+        // console.log(fund);
+        // console.log(available);
+        // //Inserted data
+        // db.collection('Result').doc('Result').set({
+        //     fund: fund,
+        //     donated: donated,
+        //     available: available,
+        // });
         // Deleting from database
         db.collection('Pending Donation').doc(value.transactionID).delete().then(function () {
 
