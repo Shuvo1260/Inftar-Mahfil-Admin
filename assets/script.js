@@ -33,6 +33,7 @@ var amounts = {
     Total: 0
 };
 
+document.getElementById('listName').innerHTML = "Pending List::"
 setAmounts(amounts)
 
 function setAmounts(amounts) {
@@ -138,12 +139,15 @@ db.collection('Donation List').onSnapshot(snapshot => {
 
 document.getElementById("pendingList").onclick = function () {
     isPendingListClicked = true;
+    
+    document.getElementById('listName').innerHTML = "Pending List::"
     loadPendingTableData(pendingTableData);
 
 }
 
 document.getElementById("approvedList").onclick = function () {
     isPendingListClicked = false;
+    document.getElementById('listName').innerHTML = "Approved List::"
     loadDonationTableData(donationTableData);
 }
 
