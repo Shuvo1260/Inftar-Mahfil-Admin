@@ -139,7 +139,11 @@ db.collection('Donation List').onSnapshot(snapshot => {
 
 document.getElementById("pendingList").onclick = function () {
     isPendingListClicked = true;
-    
+    if(pendingTableData.length > 0) {
+        document.getElementById('noPendingItem').style.display = 'none'
+    } else {
+        document.getElementById('noPendingItem').style.display = 'block'
+    }
     document.getElementById('listName').innerHTML = "Pending List::"
     loadPendingTableData(pendingTableData);
 
@@ -147,6 +151,7 @@ document.getElementById("pendingList").onclick = function () {
 
 document.getElementById("approvedList").onclick = function () {
     isPendingListClicked = false;
+    document.getElementById('noPendingItem').style.display = 'none'
     document.getElementById('listName').innerHTML = "Approved List::"
     loadDonationTableData(donationTableData);
 }
