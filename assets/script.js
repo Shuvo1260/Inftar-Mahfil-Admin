@@ -22,6 +22,29 @@ var available;
 let pendingTableData = [];
 let donationTableData = [];
 let isPendingListClicked = true;
+var amounts = {
+    Shuvo: 0,
+    Shabab: 0,
+    Rahat: 0,
+    Monjur: 0,
+    Shafin: 0,
+    Rafi: 0,
+    Ovi: 0,
+    Total: 0
+};
+
+setAmounts(amounts)
+
+function setAmounts(amounts) {
+    document.getElementById('shuvo').innerHTML = amounts.Shuvo
+    document.getElementById('shabab').innerHTML = amounts.Shabab
+    document.getElementById('rahat').innerHTML = amounts.Rahat
+    document.getElementById('monjur').innerHTML = amounts.Monjur
+    document.getElementById('shafin').innerHTML = amounts.Shafin
+    document.getElementById('rafi').innerHTML = amounts.Rafi
+    document.getElementById('ovi').innerHTML = amounts.Ovi
+    document.getElementById('total').innerHTML = amounts.Total  
+}
 
 db.collection('Pending Donation').onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
@@ -50,6 +73,11 @@ db.collection('Pending Donation').onSnapshot(snapshot => {
         }
     });
     if (isPendingListClicked) {
+        if(pendingTableData.length > 0) {
+            document.getElementById('noPendingItem').style.display = 'none'
+        } else {
+            document.getElementById('noPendingItem').style.display = 'block'
+        }
         loadPendingTableData(pendingTableData);
     }
 
@@ -59,11 +87,15 @@ db.collection('Pending Donation').onSnapshot(snapshot => {
 // Realtime data fetching of donation list
 db.collection('Donation List').onSnapshot(snapshot => {
     let changes = snapshot.docChanges();
-    fund = "0"
-    available = "0"
     changes.forEach(change => {
         if (change.type === 'added') { // If data is added
             renderDonationList(change.doc);
+
+            // Setting individual amounts
+            amounts[change.doc.data().account] += parseInt(change.doc.data().amount);
+            amounts['Total'] += parseInt(change.doc.data().amount);
+
+            setAmounts(amounts)
             // fund = parseInt(fund) + parseInt(change.doc.data().amount);
             // available = parseInt(available) + parseInt(change.doc.data().amount);
             // console.log("fund: " + fund);
