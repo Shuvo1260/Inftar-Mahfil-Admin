@@ -14,192 +14,175 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 //   firebase.analytics();
 
-console.log("Result");
 var db = firebase.firestore();
 var fund;
 var donated;
 var available;
 
-let tableData = [];
+let pendingTableData = [];
+let donationTableData = [];
+let isPendingListClicked = true;
 
-    db.collection('Result').onSnapshot(snapshot => {
-        console.log("Result");
-        let changes = snapshot.docChanges();
-        changes.forEach(change => {
-            console.log(change.doc.data());
-            if (change.type === 'added') {
-                fund = change.doc.data().fund
-                donated = change.doc.data().donated
-                available = change.doc.data().available
-            } else if (change.type === "modified") {
-                console.log(change.doc.data());
-                fund = change.doc.data().fund
-                donated = change.doc.data().donated
-                available = change.doc.data().available
-            }
-        });
-    })
-
-document.getElementById("pendingList").onclick = function () {
-
-
-    console.log(fund)
-    tableData = []
-    databasePath = 'Pending Donation'
-    // Realtime data fetching
-    db.collection('Pending Donation').onSnapshot(snapshot => {
-        let changes = snapshot.docChanges();
-        changes.forEach(change => {
-            console.log(change.doc.data());
-            if (databasePath === 'Pending Donation') {
-                if (change.type === 'added') { // If data is added
-                    renderList(change.doc);
-                } else if (change.type === "removed") { // If data is removed
-                    console.log(change.doc.data().transactionID);
-                    let index = 0;
-                    for (let data of tableData) {
-                        if (data.transactionID == change.doc.data().transactionID) {
-                            console.log("Removed ", index);
-                            tableData.splice(index, 1);
-                            break;
-                        }
-                        index++;
-                    }
-                } else if (change.type === "modified") { // If data is modified
-                    console.log(change.doc.data().transactionID);
-                    let index = 0;
-                    for (let data of tableData) {
-                        if (data.transactionID == change.doc.data().transactionID) {
-                            console.log("Modified ", index);
-                            tableData[index] = change.doc.data();
-                            break;
-                        }
-                        index++;
-                    }
+db.collection('Pending Donation').onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    changes.forEach(change => {
+        if (change.type === 'added') { // If data is added
+            renderPendingList(change.doc);
+        } else if (change.type === "removed") { // If data is removed
+            let index = 0;
+            for (let data of pendingTableData) {
+                if (data.transactionID == change.doc.data().transactionID) {
+                    console.log("Removed ", index);
+                    pendingTableData.splice(index, 1);
+                    break;
                 }
+                index++;
             }
-        });
-        if (databasePath === 'Pending Donation') {
-            loadTableData(tableData);
+        } else if (change.type === "modified") { // If data is modified
+            let index = 0;
+            for (let data of pendingTableData) {
+                if (data.transactionID == change.doc.data().transactionID) {
+                    pendingTableData[index] = change.doc.data();
+                    break;
+                }
+                index++;
+            }
         }
     });
+    if (isPendingListClicked) {
+        loadPendingTableData(pendingTableData);
+    }
+
+});
+
+
+// Realtime data fetching of donation list
+db.collection('Donation List').onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    fund = "0"
+    available = "0"
+    changes.forEach(change => {
+        if (change.type === 'added') { // If data is added
+            renderDonationList(change.doc);
+            // fund = parseInt(fund) + parseInt(change.doc.data().amount);
+            // available = parseInt(available) + parseInt(change.doc.data().amount);
+            // console.log("fund: " + fund);
+            // console.log("Available: " + available);
+            // //Inserted data
+            // db.collection('Result').doc('Result').set({
+            //     fund: fund,
+            //     donated: donated,
+            //     available: available,
+            // });
+
+        } else if (change.type === "removed") { // If data is removed
+            let index = 0;
+            for (let data of donationTableData) {
+                if (data.transactionID == change.doc.data().transactionID) {
+                    console.log("Removed ", index);
+                    donationTableData.splice(index, 1);
+                    break;
+                }
+                index++;
+            }
+        } else if (change.type === "modified") { // If data is modified
+            let index = 0;
+            for (let data of donationTableData) {
+                if (data.transactionID == change.doc.data().transactionID) {
+                    donationTableData[index] = change.doc.data();
+                    break;
+                }
+                index++;
+            }
+        }
+
+    });
+
+    if (isPendingListClicked == false) {
+        loadDonationTableData(donationTableData);
+        console.log(isPendingListClicked);
+    }
+});
+
+document.getElementById("pendingList").onclick = function () {
+    isPendingListClicked = true;
+    loadPendingTableData(pendingTableData);
+
 }
 
 document.getElementById("approvedList").onclick = function () {
-    console.log("approved")
-    tableData = []
-    databasePath = 'Donation List'
-    // Realtime data fetching
-    db.collection('Donation List').onSnapshot(snapshot => {
-        let changes = snapshot.docChanges();
-        fund = "0"
-        available = "0"
-        changes.forEach(change => {
-            if (databasePath === 'Donation List') {
-                console.log(change.doc.data());
-                if (change.type === 'added') { // If data is added
-                    renderList(change.doc);
-                    // fund = parseInt(fund) + parseInt(change.doc.data().amount);
-                    // available = parseInt(available) + parseInt(change.doc.data().amount);
-                    // console.log("fund: " + fund);
-                    // console.log("Available: " + available);
-                    // //Inserted data
-                    // db.collection('Result').doc('Result').set({
-                    //     fund: fund,
-                    //     donated: donated,
-                    //     available: available,
-                    // });
-
-                } else if (change.type === "removed") { // If data is removed
-                    console.log("Id: " + change.doc.data().transactionID);
-                    let index = 0;
-                    for (let data of tableData) {
-                        if (data.transactionID == change.doc.data().transactionID) {
-                            console.log("Removed ", index);
-                            tableData.splice(index, 1);
-                            break;
-                        }
-                        index++;
-                    }
-                } else if (change.type === "modified") { // If data is modified
-                    console.log(change.doc.data().transactionID);
-                    let index = 0;
-                    for (let data of tableData) {
-                        if (data.transactionID == change.doc.data().transactionID) {
-                            console.log("Modified ", index);
-                            tableData[index] = change.doc.data();
-                            break;
-                        }
-                        index++;
-                    }
-                }
-            }
-
-        });
-
-        if (databasePath === 'Donation List') {
-            loadTableApprovedData(tableData);
-        }
-    });
+    isPendingListClicked = false;
+    loadDonationTableData(donationTableData);
 }
 
 
 //create element and render list
-function renderList(doc) {
+function renderPendingList(doc) {
 
     var values = {
         name: doc.data().name, email: doc.data().email, batch: doc.data().batch, account: doc.data().account,
         amount: doc.data().amount, transactionID: doc.data().transactionID
     };
-
-    tableData.push(values);
-    console.log(tableData);
+    pendingTableData.push(values);
 }
 
-var databasePath = 'Pending Donation'
+//create element and render list
+function renderDonationList(doc) {
+
+    var values = {
+        name: doc.data().name, email: doc.data().email, batch: doc.data().batch, account: doc.data().account,
+        amount: doc.data().amount, transactionID: doc.data().transactionID
+    };
+    donationTableData.push(values);
+}
+
 
 
 
 
 // Adding data into table
-function loadTableData(tableData) {
+function loadPendingTableData(pendingTableData) {
     const tableBody = document.getElementById('donorList');
     let dataHtml = '';
     let index = 0;
-    for (let data of tableData) {
-        dataHtml += '<tr><td><input class="list-value" value="' + data.name +
-            '"></td><td><input class="list-value" value="' + data.email +
-            '"></td><td><input class="list-value" value="' + data.batch +
-            '"></td><td><input class="list-value" value="' + data.account +
-            '"></td><td><input class="list-value" value="' + data.amount +
-            '"></td><td><input class="list-value" value="' + data.transactionID +
-            '"></td><td><center><img id="approveId' + index + '" style="height: 25px; cursor:pointer;" src="assets/Images/approved.png"' +
-            '></center></td></tr>';
-        index++;
-    }
-    tableBody.innerHTML = dataHtml;
+    if (pendingTableData != null) {
+        for (let data of pendingTableData) {
+            dataHtml += '<tr><td><input class="list-value" value="' + data.name +
+                '"></td><td><input class="list-value" value="' + data.email +
+                '"></td><td><input class="list-value" value="' + data.batch +
+                '"></td><td><input class="list-value" value="' + data.account +
+                '"></td><td><input class="list-value" value="' + data.amount +
+                '"></td><td><input class="list-value" value="' + data.transactionID +
+                '"></td><td><center><img id="approveId' + index + '" style="height: 25px; cursor:pointer;" src="assets/Images/approved.png"' +
+                '></center></td></tr>';
+            index++;
+        }
+        tableBody.innerHTML = dataHtml;
 
-    // Setting event listener for each item
-    setEventListener();
+        // Setting event listener for each item
+        setEventListener();
+    }
 }
 
 
 // Adding data into table
-function loadTableApprovedData(tableData) {
+function loadDonationTableData(donationTableData) {
     const tableBody = document.getElementById('donorList');
     let dataHtml = '';
     let index = 0;
-    for (let data of tableData) {
-        dataHtml += '<tr><td><input class="list-value" value="' + data.name +
-            '"></td><td><input class="list-value" value="' + data.email +
-            '"></td><td><input class="list-value" value="' + data.batch +
-            '"></td><td><input class="list-value" value="' + data.account +
-            '"></td><td><input class="list-value" value="' + data.amount +
-            '"></td><td><input class="list-value" value="' + data.transactionID +
-            '"></center></td></tr>';
-        index++;
+    if (donationTableData != null) {
+        for (let data of donationTableData) {
+            dataHtml += '<tr><td><input class="list-value" value="' + data.name +
+                '"></td><td><input class="list-value" value="' + data.email +
+                '"></td><td><input class="list-value" value="' + data.batch +
+                '"></td><td><input class="list-value" value="' + data.account +
+                '"></td><td><input class="list-value" value="' + data.amount +
+                '"></td><td><input class="list-value" value="' + data.transactionID +
+                '"></center></td></tr>';
+            index++;
+        }
+        tableBody.innerHTML = dataHtml;
     }
-    tableBody.innerHTML = dataHtml;
 
 }
 
@@ -208,19 +191,16 @@ function setEventListener() {
     let table = document.getElementById('table');
     for (let index = 0; index < table.rows.length; index++) {
         let element = document.getElementById("approveId" + index);
-        let value = tableData[index];
-        console.log(value);
+        let value = pendingTableData[index];
+        // console.log(value);
         element.addEventListener('click', function () {
             approved(index, value)
         }, false);
     }
-    console.log(element);
 }
 
 function approved(index, value) {
 
-
-    console.log(value);
     //Inserted data
     db.collection('Donation List').doc(value.transactionID).set({
         name: value.name,
