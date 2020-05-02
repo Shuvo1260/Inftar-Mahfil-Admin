@@ -15,9 +15,6 @@ firebase.initializeApp(firebaseConfig);
 //   firebase.analytics();
 
 var db = firebase.firestore();
-var fund;
-var donated;
-var available;
 
 let pendingTableData = [];
 let donationTableData = [];
@@ -33,6 +30,12 @@ var amounts = {
     Total: 0
 };
 
+var fundAmount = {
+    fund: 0,
+    distributed: 0,
+    balance: 0
+}
+
 document.getElementById('listName').innerHTML = "Pending List::"
 setAmounts(amounts)
 
@@ -44,7 +47,7 @@ function setAmounts(amounts) {
     document.getElementById('shafin').innerHTML = amounts.Shafin
     document.getElementById('rafi').innerHTML = amounts.Rafi
     document.getElementById('ovi').innerHTML = amounts.Ovi
-    document.getElementById('total').innerHTML = amounts.Total  
+    document.getElementById('total').innerHTML = amounts.Total
 }
 
 db.collection('Pending Donation').onSnapshot(snapshot => {
@@ -74,7 +77,7 @@ db.collection('Pending Donation').onSnapshot(snapshot => {
         }
     });
     if (isPendingListClicked) {
-        if(pendingTableData.length > 0) {
+        if (pendingTableData.length > 0) {
             document.getElementById('noPendingItem').style.display = 'none'
         } else {
             document.getElementById('noPendingItem').style.display = 'block'
@@ -97,16 +100,8 @@ db.collection('Donation List').onSnapshot(snapshot => {
             amounts['Total'] += parseInt(change.doc.data().amount);
 
             setAmounts(amounts)
-            // fund = parseInt(fund) + parseInt(change.doc.data().amount);
-            // available = parseInt(available) + parseInt(change.doc.data().amount);
-            // console.log("fund: " + fund);
-            // console.log("Available: " + available);
-            // //Inserted data
-            // db.collection('Result').doc('Result').set({
-            //     fund: fund,
-            //     donated: donated,
-            //     available: available,
-            // });
+            fundAmount.fund = parseInt(fundAmount.fund) + parseInt(change.doc.data().amount);
+            fundAmount.balance = parseInt(fundAmount.balance) + parseInt(change.doc.data().amount);
 
         } else if (change.type === "removed") { // If data is removed
             let index = 0;
@@ -131,15 +126,44 @@ db.collection('Donation List').onSnapshot(snapshot => {
 
     });
 
+    saveFundAmount(fundAmount)
     if (isPendingListClicked == false) {
+
         loadDonationTableData(donationTableData);
         console.log(isPendingListClicked);
     }
 });
 
+function saveFundAmount(fundAmount) {
+
+    var donated;
+    db
+        .collection('Result')
+        .doc('Result')
+        .get()
+        .then(doc => {
+            if (doc.exists) {
+                donated = parseInt(doc.data().donated);
+                console.log(donated);
+                fundAmount.balance -= donated;
+                console.log(fundAmount.balance);
+
+                //Inserted data of total funding
+                db.collection('Result').doc('Result').set({
+                    fund: fundAmount.fund,
+                    donated: fundAmount.distributed,
+                    available: fundAmount.balance,
+                });
+            }
+        })
+        .catch(error => {
+            console.log("Resutl error: ", error)
+        });
+}
+
 document.getElementById("pendingList").onclick = function () {
     isPendingListClicked = true;
-    if(pendingTableData.length > 0) {
+    if (pendingTableData.length > 0) {
         document.getElementById('noPendingItem').style.display = 'none'
     } else {
         document.getElementById('noPendingItem').style.display = 'block'
@@ -226,6 +250,7 @@ function loadDonationTableData(donationTableData) {
     }
 
 }
+
 
 // Adding onclick listener to the delete
 function setEventListener() {
