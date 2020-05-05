@@ -49,9 +49,61 @@
             <br>
             <label>Ovi: <label id="ovi"></label></label>
             <br>
-            <center><strong><label style="font-size: 30px;">Total: <label id="total"></label></label></strong></center>
+            <center>
+                <strong><label style="font-size: 30px;">Total: <label id="total"></label></label></strong>
+                
+                <strong><label style="font-size: 30px; margin-left: 30px;">Person: <label id="person"></label></label></strong>
+            </center>
         </fieldset>
     </div>
+
+
+    <br>
+    <br>
+    <form id="distributedForm" style="margin-bottom: 50px;">
+        <fieldset>
+            <legend>Distribution::</legend>
+            <label>Name</label></br>
+            <textarea name="name" class="input_box" placeholder="Name" required></textarea></br></br>
+
+
+            <label>Money amount</label></br>
+            <textarea name="amount" type="number" class="input_box" placeholder="Money amount" inputmode="numeric"
+                required></textarea></br></br>
+
+
+            <label>Charge</label></br>
+            <textarea name="charge" type="number" class="input_box" placeholder="Charge" inputmode="numeric"
+                required></textarea></br></br>
+
+            <label>Transaction ID</label></br>
+            <textarea name="transactionID" class="input_box" placeholder="Transaction ID" required></textarea></br></br>
+
+            
+            <label>Proof Statement</label></br>
+            <textarea name="proof" class="input_box" placeholder="Proof Statement" required></textarea></br></br>
+
+            <button id="submit" type="button" class="button" style="float: right">Submit</button>
+            
+            <div style="margin-top: 150px;">
+                
+            <center>
+                <table id="distributedTable">
+                    <thead>
+                        <tr>
+                            <th>Distributed To</th>
+                            <th>Amount</th>
+                            <th>Charge</th>
+                            <th>Total</th>
+                            <th>Proof Statement</th>
+                        </tr>
+                    </thead>
+                    <tbody id="distributedList"></tbody>
+                </table>
+            </center>
+            </div>
+        </fieldset>
+    </form>
 
     <br>
     <br>

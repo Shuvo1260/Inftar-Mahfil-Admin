@@ -18,6 +18,7 @@ var db = firebase.firestore();
 
 let pendingTableData = [];
 let donationTableData = [];
+let distributedTableData = [];
 let isPendingListClicked = true;
 var amounts = {
     Shuvo: 0,
@@ -27,7 +28,8 @@ var amounts = {
     Shafin: 0,
     Rafi: 0,
     Ovi: 0,
-    Total: 0
+    Total: 0,
+    Person: 0,
 };
 
 var fundAmount = {
@@ -35,6 +37,26 @@ var fundAmount = {
     distributed: 0,
     balance: 0
 }
+
+
+
+db.collection('Result').onSnapshot(snapshot => {
+    console.log("Result");
+    let changes = snapshot.docChanges();
+    changes.forEach(change => {
+        console.log(change.doc.data());
+        if (change.type === 'added') {
+            fundAmount["fund"] = change.doc.data().fund
+            fundAmount["distributed"]  = change.doc.data().donated
+            fundAmount["balance"] = change.doc.data().available
+        } else if (change.type === "modified") {
+            console.log(change.doc.data());
+            fundAmount["fund"] = change.doc.data().fund
+            fundAmount["distributed"]  = change.doc.data().donated
+            fundAmount["balance"] = change.doc.data().available
+        }
+    });
+})
 
 document.getElementById('listName').innerHTML = "Pending List::"
 setAmounts(amounts)
@@ -48,6 +70,7 @@ function setAmounts(amounts) {
     document.getElementById('rafi').innerHTML = amounts.Rafi
     document.getElementById('ovi').innerHTML = amounts.Ovi
     document.getElementById('total').innerHTML = amounts.Total
+    document.getElementById('person').innerHTML = amounts.Person
 }
 
 db.collection('Pending Donation').onSnapshot(snapshot => {
@@ -98,10 +121,11 @@ db.collection('Donation List').onSnapshot(snapshot => {
             // Setting individual amounts
             amounts[change.doc.data().account] += parseInt(change.doc.data().amount);
             amounts['Total'] += parseInt(change.doc.data().amount);
+            amounts['Person']++;
 
             setAmounts(amounts)
-            fundAmount.fund = parseInt(fundAmount.fund) + parseInt(change.doc.data().amount);
-            fundAmount.balance = parseInt(fundAmount.balance) + parseInt(change.doc.data().amount);
+            // fundAmount.fund = parseInt(fundAmount.fund) + parseInt(change.doc.data().amount);
+            // fundAmount.balance = parseInt(fundAmount.balance) + parseInt(change.doc.data().amount);
 
         } else if (change.type === "removed") { // If data is removed
             let index = 0;
@@ -134,6 +158,93 @@ db.collection('Donation List').onSnapshot(snapshot => {
     }
 });
 
+
+//create element and render list
+function renderDistributedList(doc) {
+
+    var values = {
+        name: doc.data().name, amount: doc.data().amount, charge: doc.data().charge,
+        total: doc.data().total, transactionID: doc.data().transactionID, proof: doc.data().proof
+    };
+    distributedTableData.push(values);
+}
+
+db.collection('Distributed').onSnapshot(snapshot => {
+    let changes = snapshot.docChanges();
+    changes.forEach(change => {
+        if (change.type === 'added') { // If data is added
+            renderDistributedList(change.doc);
+        } else if (change.type === "removed") { // If data is removed
+            let index = 0;
+            for (let data of distributedTableData) {
+                if (data.transactionID == change.doc.data().transactionID) {
+                    console.log("Removed ", index);
+                    distributedTableData.splice(index, 1);
+                    break;
+                }
+                index++;
+            }
+        } else if (change.type === "modified") { // If data is modified
+            let index = 0;
+            for (let data of distributedTableData) {
+                if (data.transactionID == change.doc.data().transactionID) {
+                    distributedTableData[index] = change.doc.data();
+                    break;
+                }
+                index++;
+            }
+        }
+    });
+
+    loadDistributedTableData(distributedTableData);
+
+});
+
+
+// Adding data into table
+function loadDistributedTableData(distributedTableData) {
+    const tableBody = document.getElementById('distributedList');
+    let dataHtml = '';
+    if (distributedTableData != null) {
+        for (let data of distributedTableData) {
+            dataHtml += '<tr><td><input class="list-value" value="' + data.name +
+                '"></td><td><input class="list-value" value="' + data.amount +
+                '"></td><td><input class="list-value" value="' + data.charge +
+                '"></td><td><input class="list-value" value="' + data.total +
+                '"></td><td><input class="list-value" value="' + data.proof +
+                '"></center></td></tr>';
+            tableBody.innerHTML = dataHtml;
+        }
+
+    }
+}
+
+const form = document.querySelector('#distributedForm');
+function saveDistributedList() {
+
+    var total = parseInt(form.amount.value) + parseInt(form.charge.value);
+    //Inserted data of total funding
+    db.collection('Distributed').doc(form.transactionID.value).set({
+        name: form.name.value,
+        amount: form.amount.value,
+        charge: form.charge.value,
+        total: total,
+        transactionID: form.transactionID.value,
+        proof: form.proof.value
+    });
+
+    fundAmount['distributed'] += total;
+    fundAmount['balance'] -= total;
+
+    saveFundAmount(fundAmount);
+    
+    form.name.value = ""
+    form.amount.value = ""
+    form.charge.value = ""
+    form.transactionID.value = ""
+    form.proof.value = ""
+}
+
 function saveFundAmount(fundAmount) {
 
     var donated;
@@ -161,6 +272,9 @@ function saveFundAmount(fundAmount) {
         });
 }
 
+document.getElementById("submit").onclick = function () {
+    saveDistributedList();
+}
 document.getElementById("pendingList").onclick = function () {
     isPendingListClicked = true;
     if (pendingTableData.length > 0) {
