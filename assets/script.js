@@ -234,7 +234,7 @@ function saveDistributedList() {
     });
 
     fundAmount['distributed'] += total;
-    fundAmount['balance'] -= total;
+    fundAmount['balance'] = fundAmount['fund'] - fundAmount['distributed'];
 
     saveFundAmount(fundAmount);
     
@@ -391,16 +391,6 @@ function approved(index, value) {
         transactionID: value.transactionID
     }).then(function () {
 
-        // fund = parseInt(fund) + parseInt(value.amount);
-        // available = parseInt(available) + parseInt(value.amount);
-        // console.log(fund);
-        // console.log(available);
-        // //Inserted data
-        // db.collection('Result').doc('Result').set({
-        //     fund: fund,
-        //     donated: donated,
-        //     available: available,
-        // });
         // Deleting from database
         db.collection('Pending Donation').doc(value.transactionID).delete().then(function () {
 
