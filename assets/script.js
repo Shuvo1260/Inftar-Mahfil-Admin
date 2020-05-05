@@ -234,7 +234,7 @@ function saveDistributedList() {
     });
 
     fundAmount['distributed'] += total;
-    fundAmount['balance'] = fundAmount['fund'] - fundAmount['distributed'];
+    fundAmount['balance'] -= total;
 
     saveFundAmount(fundAmount);
     
@@ -254,11 +254,6 @@ function saveFundAmount(fundAmount) {
         .get()
         .then(doc => {
             if (doc.exists) {
-                donated = parseInt(doc.data().donated);
-                console.log(donated);
-                fundAmount.balance -= donated;
-                console.log(fundAmount.balance);
-
                 //Inserted data of total funding
                 db.collection('Result').doc('Result').set({
                     fund: fundAmount.fund,
