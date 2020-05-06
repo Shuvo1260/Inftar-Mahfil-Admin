@@ -386,6 +386,10 @@ function approved(index, value) {
         transactionID: value.transactionID
     }).then(function () {
 
+
+        fundAmount['fund'] += parseInt(value.amount);
+        fundAmount['balance'] += parseInt(value.amount);
+        saveFundAmount(fundAmount);
         // Deleting from database
         db.collection('Pending Donation').doc(value.transactionID).delete().then(function () {
 
